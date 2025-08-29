@@ -17,6 +17,17 @@ function savePseudo(pseudo) {
 function getPseudo() {
   return localStorage.getItem('rakatsa_pseudo') || '';
 }
+
+// Fonction pour obtenir l'URL de base (compatible GitHub Pages)
+function getBaseUrl() {
+  const { origin, pathname } = window.location;
+  // Si on est sur GitHub Pages, pathname contient le nom du repo
+  const pathParts = pathname.split('/').filter(p => p);
+  if (pathParts.length > 0 && !pathParts.includes('index.html') && !pathParts.includes('game.html')) {
+    return `${origin}/${pathParts[0]}`;
+  }
+  return origin;
+}
 function hashCode(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -33,7 +44,7 @@ function getAvatarUrl(peerId) {
 // --- Initialisation et état du jeu ---
 const room = getQueryParam('room');
 let pseudo = getQueryParam('pseudo') || getPseudo();
-if (!room || !pseudo) window.location.href = 'index.html';
+if (!room || !pseudo) window.location.href = `${getBaseUrl()}/index.html`;
 savePseudo(pseudo);
 
 window.gameState = {

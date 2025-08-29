@@ -22,11 +22,19 @@ function getPseudo() {
   return localStorage.getItem('rakatsa_pseudo') || '';
 }
 
-// Page d'accueil : création/rejoindre
-if (document.getElementById('create-room')) {
+// Fonction pour obtenir l'URL de base (compatible GitHub Pages)
+function getBaseUrl() {
+  const { origin, pathname } = window.location;
+  // Si on est sur GitHub Pages, pathname contient le nom du repo
+  const pathParts = pathname.split('/').filter(p => p);
+  if (pathParts.length > 0 && !pathParts.includes('index.html') && !pathParts.includes('game.html')) {
+    return `${origin}/${pathParts[0]}`;
+  }
+  return origin;
+}
   document.getElementById('create-room').onclick = () => {
     const code = randomRoomCode();
-  const url = `${window.location.origin}/game.html?room=${code}`;
+  const url = `${getBaseUrl()}/game.html?room=${code}`;
     const roomSection = document.getElementById('room-section');
     roomSection.style.display = '';
     roomSection.innerHTML = `
@@ -36,7 +44,7 @@ if (document.getElementById('create-room')) {
       <a href="${url}" id="invite-link">${url}</a>
       <div id="qr"></div>
       <button id="go-to-room">Entrer dans la salle</button>
-      <div style="margin-top:12px;font-size:0.95em;">Lien à partager : <br><b>${window.location.origin}/game.html?room=${code}</b></div>
+      <div style="margin-top:12px;font-size:0.95em;">Lien à partager : <br><b>${getBaseUrl()}/game.html?room=${code}</b></div>
     `;
     // QR code
     const qr = new QRious({
@@ -69,7 +77,7 @@ if (document.getElementById('create-room')) {
       if (code.length !== 4) return alert('Code invalide');
       if (pseudo.length < 2) return alert('Pseudo trop court');
       savePseudo(pseudo);
-  window.location.href = `${window.location.origin}/game.html?room=${code}&pseudo=${encodeURIComponent(pseudo)}`;
+      window.location.href = `${getBaseUrl()}/game.html?room=${code}&pseudo=${encodeURIComponent(pseudo)}`;
     };
   };
 }
